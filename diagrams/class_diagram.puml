@@ -1,0 +1,98 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam classAttributeFontSize 11
+skinparam linetype ortho
+
+package "Użytkownik" {
+    class User {
+        - userId: UUID
+        - email: String
+        - passwordHash: String
+        + register(email: String, password: String): bool
+        + login(email: String, password: String): Session
+    }
+
+    class Session {
+        - token: String
+        - createdAt: DateTime
+        + isValid(): bool
+    }
+
+    User --> Session : "tworzy"
+}
+
+package "Nadawanie paczek" {
+    class Parcel {
+        - parcelId: UUID
+        - height: float
+        - width: float
+        - depth: float
+        - type: ParcelType
+        - code: String
+        - assignedLocker: Locker
+        + generateCode(): String
+        + calculateVolume(): float
+    }
+
+    enum ParcelType {
+        SZKLO
+        ELEKTRONIKA
+        UBRANIA
+        INNE
+    }
+
+    class ParcelSender {
+        + createParcel(height: float, width: float, depth: float, type: ParcelType): Parcel
+    }
+
+    class Locker {
+        - lockerId: UUID
+        - size: LockerSize
+        - isOccupied: bool
+        + assignParcel(parcel: Parcel): bool
+        + open(): void
+        + close(): void
+    }
+
+    enum LockerSize {
+        SMALL
+        MEDIUM
+        LARGE
+    }
+
+    User --> ParcelSender : "używa"
+    ParcelSender --> Parcel : "tworzy"
+    Parcel --> Locker : "przypisany do"
+    Parcel --> ParcelType
+    Locker --> LockerSize
+}
+
+package "Odbieranie paczek" {
+    class ParcelReceiver {
+        + receiveParcel(code: String): bool
+        + openLockerByQR(): void
+        + openLockerRemotely(): void
+    }
+
+    class Order {
+        - orderId: UUID
+        - parcel: Parcel
+        - status: OrderStatus
+        + getDetails(): String
+    }
+
+    enum OrderStatus {
+        W_PACZKOMACIE
+        ODEBRANA
+        W_DRODZE
+    }
+
+    User --> Order : "posiada"
+    Order --> Parcel
+    Order --> OrderStatus
+    User --> ParcelReceiver : "używa"
+}
+
+@enduml

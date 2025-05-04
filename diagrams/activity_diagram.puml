@@ -1,0 +1,26 @@
+@startuml
+start
+
+:Użytkownik podaje wymiary paczki;
+:Użytkownik wybiera typ paczki;
+
+:Oblicz objętość paczki;
+:Wybierz odpowiednią skrytkę na podstawie wymiarów;
+
+if (Czy dostępna skrytka?) then (Tak)
+  :Wygeneruj unikalny kod nadania;
+  :Zapisz dane paczki w systemie;
+  :Wyświetl kod nadania użytkownikowi;
+else (Nie)
+  :Wyświetl komunikat "Brak dostępnych skrytek";
+  stop
+endif
+
+:Użytkownik wpisuje kod nadania w paczkomacie;
+
+:Symulacja: odliczanie 30 sekund;
+:Wyświetl komunikat:
+"Paczka nadana, dziękujemy!";
+
+stop
+@enduml
