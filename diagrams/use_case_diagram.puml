@@ -1,0 +1,52 @@
+@startuml
+left to right direction
+
+actor "Użytkownik" as U
+actor "Administrator" as A
+
+rectangle "Strona internetowa paczkomatu" {
+
+    usecase "Logowanie" as UC1
+    usecase "Rejestracja" as UC2
+
+    usecase "Nadawanie paczki" as UC3
+    usecase "Podanie wymiarów paczki" as UC3_1
+    usecase "Wybór typu paczki" as UC3_2
+    usecase "Generowanie kodu nadania" as UC3_3
+
+    usecase "Odbieranie paczki" as UC4
+    usecase "Wprowadzenie kodu odbioru" as UC4_1
+    usecase "Otworzenie skrytki" as UC4_2
+
+    usecase "Zarządzanie użytkownikami" as UC5
+    usecase "Przeglądanie listy użytkowników" as UC5_1
+    usecase "Blokowanie/Usuwanie użytkownika" as UC5_2
+
+    usecase "Zarządzanie paczkami" as UC6
+    usecase "Przeglądanie paczek" as UC6_1
+    usecase "Zmiana statusu paczki" as UC6_2
+}
+
+' Relacje użytkownika
+U --> UC1
+U --> UC2
+U --> UC3
+UC3 --> UC3_1 : <<include>>
+UC3 --> UC3_2 : <<include>>
+UC3 --> UC3_3 : <<include>>
+
+U --> UC4
+UC4 --> UC4_1 : <<include>>
+UC4 --> UC4_2 : <<include>>
+
+' Relacje administratora
+A --> UC1
+A --> UC5
+UC5 --> UC5_1 : <<include>>
+UC5 --> UC5_2 : <<include>>
+
+A --> UC6
+UC6 --> UC6_1 : <<include>>
+UC6 --> UC6_2 : <<include>>
+
+@enduml
