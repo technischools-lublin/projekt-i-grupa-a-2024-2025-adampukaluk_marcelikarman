@@ -41,3 +41,42 @@ yarn-error.log*
 next-env.d.ts
 
 .idea
+
+
+
+# Pliki systemowe
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Środowisko wirtualne
+venv/
+env/
+
+# Konfiguracje IDE
+.idea/
+.vscode/
+
+# Baza danych SQLite
+*.sqlite3
+
+# Django
+*.log
+*.pot
+*.mo
+
+# Pliki migracji z cache
+**/migrations/__pycache__/
+
+# Pliki tymczasowe
+*.swp
+.DS_Store
+
+# Node/Frontend (jeśli masz frontend w tym repo)
+node_modules/
+dist/
+build/
+
+# Plik .env jeśli używasz
+.env
