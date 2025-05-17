@@ -15,7 +15,7 @@
 
 # next.js
 /.next/
-/out/
+
 
 # production
 /build
@@ -59,7 +59,7 @@ env/
 .vscode/
 
 # Baza danych SQLite
-*.sqlite3
+
 
 # Django
 *.log
@@ -80,3 +80,4 @@ build/
 
 # Plik .env jeśli używasz
 .env
+.next
