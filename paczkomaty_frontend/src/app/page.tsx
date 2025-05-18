@@ -4,6 +4,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import EnhancedMap from '@/components/Map'
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
@@ -325,7 +326,7 @@ export default function Home() {
               transition={{ 
                 duration: 4,
                 repeat: Infinity,
-                repeatType: "loop",
+                repeatType: "reverse",
                 ease: "easeInOut"
               }}
             >
@@ -494,106 +495,7 @@ export default function Home() {
       {/* Interactive Map Demo */}
       <section className="py-16 bg-white dark:bg-gray-900 overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto relative">
-            <motion.h2 
-              className="text-3xl font-bold mb-8 dark:text-white text-center"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              Znajdź najbliższy paczkomat
-            </motion.h2>
-            
-            <motion.div 
-              className="relative h-64 md:h-80 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-            >
-              {/* Poland map placeholder */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative w-40 h-48">
-                  {/* Basic Poland map shape */}
-                  <svg viewBox="0 0 100 120" className="w-full h-full text-gray-400 dark:text-gray-500">
-                    <path d="M30,10 L70,5 L95,30 L85,70 L60,100 L30,110 L5,85 L10,50 L30,10" fill="currentColor" />
-                  </svg>
-                  
-                  {/* Animated paczkomat dots */}
-                  <motion.div 
-                    className="absolute top-1/4 left-1/4 w-3 h-3 bg-red-500 rounded-full"
-                    animate={{ scale: [1, 1.5, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
-                  <motion.div 
-                    className="absolute top-1/2 left-1/2 w-3 h-3 bg-red-500 rounded-full"
-                    animate={{ scale: [1, 1.5, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                  />
-                  <motion.div 
-                    className="absolute bottom-1/4 right-1/3 w-3 h-3 bg-red-500 rounded-full"
-                    animate={{ scale: [1, 1.5, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                  />
-                </div>
-              </div>
-              
-              {/* Map controls overlay */}
-              <div className="absolute bottom-4 right-4 flex space-x-2">
-                <motion.button 
-                  className="bg-white dark:bg-gray-800 p-2 rounded-full shadow"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                </motion.button>
-                <motion.button 
-                  className="bg-white dark:bg-gray-800 p-2 rounded-full shadow"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                  </svg>
-                </motion.button>
-              </div>
-              
-              {/* Search overlay */}
-              <div className="absolute top-4 left-4 right-4">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg flex items-center p-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <input 
-                    type="text" 
-                    placeholder="Wpisz adres lub kod pocztowy..."
-                    className="bg-transparent border-none outline-none flex-1 text-gray-800 dark:text-gray-200 text-sm"
-                  />
-                  <motion.button 
-                    className="bg-blue-600 text-white py-1 px-3 rounded text-xs"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Szukaj
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
-            
-            <div className="flex justify-center mt-6">
-              <Link href="/locations">
-                <motion.button 
-                  className="bg-blue-600 text-white px-6 py-2 rounded shadow hover:bg-blue-700 transition-colors"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Wszystkie lokalizacje
-                </motion.button>
-              </Link>
-            </div>
-          </div>
+              <EnhancedMap/>
         </div>
       </section>
 

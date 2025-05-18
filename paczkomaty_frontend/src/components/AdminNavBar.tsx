@@ -53,8 +53,8 @@ export default function NavBar() {
 
   const navLinks = [
     { href: '/tracking', label: 'Śledź paczkę', icon: <Package size={18} /> },
-    { href: '/locations', label: 'Lokalizacje', icon: <MapPin size={18} /> },
-    { href: '/dashboard', label: 'Panel', icon: <LayoutDashboard size={18} /> },
+    { href: '/admin/locations', label: 'Lokalizacje', icon: <MapPin size={18} /> },
+    { href: '/admin', label: 'Panel', icon: <LayoutDashboard size={18} /> },
   ]
 
   const isLinkActive = (path: string) => pathname === path
@@ -71,7 +71,7 @@ export default function NavBar() {
           >
             <Link href="/" className="text-2xl font-bold text-white flex items-center">
               <span className="bg-white text-blue-800 px-2 py-1 rounded mr-2">P</span>
-              PackSmart
+              Admin Dashboard
             </Link>
           </motion.div>
 

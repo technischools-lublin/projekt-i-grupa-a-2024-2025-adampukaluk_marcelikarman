@@ -5,7 +5,10 @@ from .views import (
     LockerSlotViewSet, 
     ParcelViewSet, 
     DeliveryHistoryViewSet,
-    UserViewSet
+    UserViewSet,
+    UpdateParcelStatusView,
+    PickupCodeView,
+    PublicParcelLockerListView
 )
 
 router = DefaultRouter()
@@ -17,4 +20,7 @@ router.register(r'api/delivery_history', DeliveryHistoryViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('api/update_status/', UpdateParcelStatusView.as_view()),
+    path('api/get_pickup_code/', PickupCodeView.as_view()),
+    path('api/public_parcel_lockers/', PublicParcelLockerListView.as_view()),
 ]

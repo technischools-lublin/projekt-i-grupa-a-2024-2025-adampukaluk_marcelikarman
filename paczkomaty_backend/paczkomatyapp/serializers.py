@@ -33,14 +33,23 @@ class LockerSlotDetailSerializer(serializers.ModelSerializer):
 
 class ParcelLockerSerializer(serializers.ModelSerializer):
     available_slots_count = serializers.SerializerMethodField()
+    available_slots_by_size = serializers.SerializerMethodField()
 
     class Meta:
         model = ParcelLocker
         fields = ('id', 'name', 'location', 'latitude', 'longitude', 'status',
-                  'number_of_slots', 'created_at', 'available_slots_count')
+                  'small_slots', 'medium_slots', 'large_slots', 'created_at', 
+                  'available_slots_count', 'available_slots_by_size')
 
     def get_available_slots_count(self, obj):
         return obj.slots.filter(is_occupied=False).count()
+
+    def get_available_slots_by_size(self, obj):
+        return {
+            'small': obj.slots.filter(size=LockerSlot.SMALL, is_occupied=False).count(),
+            'medium': obj.slots.filter(size=LockerSlot.MEDIUM, is_occupied=False).count(),
+            'large': obj.slots.filter(size=LockerSlot.LARGE, is_occupied=False).count()
+        }
 
 
 class ParcelLockerDetailSerializer(serializers.ModelSerializer):

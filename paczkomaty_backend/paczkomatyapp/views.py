@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView as SimpleJWTTokenObtainPairView
+from django.conf import settings
+from rest_framework.views import APIView
 
 from .models import ParcelLocker, LockerSlot, Parcel, DeliveryHistory
 from .serializers import (
@@ -18,6 +21,7 @@ from .serializers import (
     ParcelPickupSerializer,
     DeliveryHistorySerializer
 )
+from paczkomatyapp.auth import MyTokenObtainPairSerializer
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -215,10 +219,7 @@ class ParcelViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # Set sender to current user if not provided
-        if not serializer.validated_data.get('sender'):
-            serializer.save(sender=self.request.user)
-        else:
-            serializer.save()
+        serializer.save(sender=self.request.user, status='preparing')
 
     @action(detail=True, methods=['post'])
     def pickup(self, request, pk=None):
@@ -287,3 +288,96 @@ class DeliveryHistoryViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(event_type=event_type)
 
         return queryset
+
+
+class CustomTokenObtainPairView(SimpleJWTTokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            access_token = response.data.get('access')
+            refresh_token = response.data.get('refresh')
+            response.set_cookie(
+                'authToken',
+                access_token,
+                httponly=True,
+                samesite='Lax',
+                secure=False,
+                max_age=int(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds()),
+                path='/',
+            )
+            response.set_cookie(
+                'refreshToken',
+                refresh_token,
+                httponly=True,
+                samesite='Lax',
+                secure=False,
+                max_age=int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
+                path='/',
+            )
+            response.data = {'message': 'Login successful'}
+        return response
+
+
+class CheckIsSuperUserView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        return Response({"is_superuser": bool(getattr(request.user, "is_superuser", False))})
+
+
+class UpdateParcelStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        tracking_number = request.data.get('tracking_number')
+        new_status = request.data.get('status')
+        if not tracking_number or not new_status:
+            return Response({'detail': 'tracking_number and status are required.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            parcel = Parcel.objects.get(tracking_number=tracking_number)
+        except Parcel.DoesNotExist:
+            return Response({'detail': 'Parcel not found.'}, status=status.HTTP_404_NOT_FOUND)
+        parcel.status = new_status
+        parcel.save()
+        return Response({'detail': 'Status updated successfully.'})
+
+
+class PickupCodeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        tracking_number = request.data.get('tracking_number')
+        if not tracking_number:
+            return Response({'detail': 'tracking_number is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            parcel = Parcel.objects.get(tracking_number=tracking_number)
+        except Parcel.DoesNotExist:
+            return Response({'detail': 'Parcel not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'pickup_code': parcel.pickup_code})
+
+
+# PUBLIC endpoint for parcel locker locations (no authentication required)
+class PublicParcelLockerListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        from .models import ParcelLocker, LockerSlot
+        lockers = ParcelLocker.objects.all()
+        data = []
+        for locker in lockers:
+            available_small = LockerSlot.objects.filter(parcel_locker=locker, size='small', is_occupied=False).count()
+            available_medium = LockerSlot.objects.filter(parcel_locker=locker, size='medium', is_occupied=False).count()
+            available_large = LockerSlot.objects.filter(parcel_locker=locker, size='large', is_occupied=False).count()
+            data.append({
+                'id': locker.id,
+                'name': locker.name,
+                'location': locker.location,
+                'latitude': float(locker.latitude),
+                'longitude': float(locker.longitude),
+                'available_slots': {
+                    'small': available_small,
+                    'medium': available_medium,
+                    'large': available_large,
+                }
+            })
+        return Response(data)

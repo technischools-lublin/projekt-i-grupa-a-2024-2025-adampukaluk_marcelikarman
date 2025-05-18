@@ -8,14 +8,45 @@ class ParcelLocker(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=30)
     location = models.CharField(max_length=255)
-    latitude = models.DecimalField(max_digits=9, decimal_places=7)
-    longitude = models.DecimalField(max_digits=9, decimal_places=7)
+    latitude = models.DecimalField(max_digits=30, decimal_places=20)
+    longitude = models.DecimalField(max_digits=30, decimal_places=20)
     status = models.BooleanField(default=False)
-    number_of_slots = models.PositiveIntegerField(default=20)
+    small_slots = models.PositiveIntegerField(default=10)
+    medium_slots = models.PositiveIntegerField(default=8)
+    large_slots = models.PositiveIntegerField(default=5)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name} ({self.location})"
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        
+        if is_new:
+            # Create small slots
+            for i in range(1, self.small_slots + 1):
+                LockerSlot.objects.create(
+                    parcel_locker=self,
+                    slot_number=f"S{i}",
+                    size=LockerSlot.SMALL
+                )
+            
+            # Create medium slots
+            for i in range(1, self.medium_slots + 1):
+                LockerSlot.objects.create(
+                    parcel_locker=self,
+                    slot_number=f"M{i}",
+                    size=LockerSlot.MEDIUM
+                )
+            
+            # Create large slots
+            for i in range(1, self.large_slots + 1):
+                LockerSlot.objects.create(
+                    parcel_locker=self,
+                    slot_number=f"L{i}",
+                    size=LockerSlot.LARGE
+                )
 
 
 class LockerSlot(models.Model):
@@ -50,12 +81,14 @@ class LockerSlot(models.Model):
 
 
 class Parcel(models.Model):
+    preparing = 'preparing'
     awaiting_pickup = 'awaiting_pickup'
     picked_up = 'picked_up'
     in_transit = 'in_transit'
     delivered = 'delivered'
 
     status_choices = [
+        (preparing, 'Preparing'),
         (awaiting_pickup, 'Awaiting Pickup'),
         (picked_up, 'Picked Up'),
         (in_transit, 'In Transit'),
@@ -67,7 +100,7 @@ class Parcel(models.Model):
     parcel_locker = models.ForeignKey(ParcelLocker, on_delete=models.CASCADE,null=True)
     locker_slot = models.ForeignKey(LockerSlot, on_delete=models.CASCADE, null=True, blank=True)
     size = models.CharField(max_length=6, choices=LockerSlot.SIZE_CHOICES, default=LockerSlot.MEDIUM)
-    status = models.CharField(max_length=30, choices=status_choices, default=in_transit)
+    status = models.CharField(max_length=30, choices=status_choices, default=preparing)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_parcels', null=True)
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_parcels', null=True)
     pickup_code = models.CharField(max_length=30)

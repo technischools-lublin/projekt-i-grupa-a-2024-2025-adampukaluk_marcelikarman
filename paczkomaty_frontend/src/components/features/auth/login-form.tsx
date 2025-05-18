@@ -73,8 +73,11 @@ export default function LoginForm() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': '*/*',
+          'Accept-Language': 'pl,en-US;q=0.7,en;q=0.3',
         },
         credentials: 'include',
+        mode: 'cors',
         body: JSON.stringify(formData),
       });
       
@@ -83,14 +86,10 @@ export default function LoginForm() {
         throw new Error(errorData.detail || 'Błąd logowania');
       }
 
-      const data = await response.json();
-      
-      if (data.access) {
-        router.push('/dashboard');
-        router.refresh(); 
-      } else {
-        throw new Error('Nieprawidłowa odpowiedź serwera');
-      }
+      // The tokens are set in cookies by the backend, not in the response body
+      // Just check if the response is successful and redirect
+      router.push('/dashboard');
+      router.refresh();
     } catch (error) {
       const err = error as Error;
       setErrors((prev) => ({ 

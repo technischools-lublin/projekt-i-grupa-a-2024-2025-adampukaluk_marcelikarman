@@ -3,7 +3,7 @@ from .models import ParcelLocker, LockerSlot, Parcel, DeliveryHistory
 
 @admin.register(ParcelLocker)
 class ParcelLockerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'location', 'status', 'number_of_slots', 'created_at')
+    list_display = ('name', 'location', 'status', 'small_slots', 'medium_slots', 'large_slots')
     search_fields = ('name', 'location')
     list_filter = ('status',)
 

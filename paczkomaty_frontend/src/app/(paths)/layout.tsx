@@ -9,7 +9,7 @@ export default function Layout({
 }) {
   return (
     <html lang="pl" className="dark">
-      <body className={`dark:bg-gray-900`}>
+      <body>
         <NavBar />
         <main className="min-h-screen">
           {children}
