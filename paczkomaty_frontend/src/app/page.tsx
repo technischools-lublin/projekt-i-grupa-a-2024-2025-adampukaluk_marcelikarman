@@ -10,6 +10,14 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import EnhancedMap from "@/components/Map";
+import CountUp from 'react-countup'
+import { Map, Package, Clock, Star, Users } from 'lucide-react'
+import Image from "next/image";
+import AdamPIC from "../../public/appCreators/me2.jpg";
+import MarceliPIC from "../../public/appCreators/marceli.jpg"
+import ChatGPT from "../../public/appCreators/ChatGPT-Logo.svg.png"
+import CursorIA from "../../public/appCreators/cursor.png"
+import CloudeAI from "../../public/appCreators/cloude.png"
 
 // Rozszerzone dane opinii klientów
 const testimonials = [
@@ -59,11 +67,6 @@ const testimonials = [
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
-  const [packageCount, setPackageCount] = useState(0);
-  const [packomatCount, setPackomatCount] = useState(0);
-  const [deliveryRate, setDeliveryRate] = useState(0);
-  const [statsVisible, setStatsVisible] = useState(false);
-  const [activeFeature, setActiveFeature] = useState(0);
   const [showNotification, setShowNotification] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isBusinessPricing, setIsBusinessPricing] = useState(false);
@@ -72,7 +75,6 @@ export default function Home() {
 
   // Refs for scroll animations
   const heroRef = useRef(null);
-  const featuresRef = useRef(null);
 
   // Parallax effect
   const { scrollYProgress } = useScroll({
@@ -81,15 +83,6 @@ export default function Home() {
   });
 
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 100]);
-
-  // Features carousel effect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveFeature((prev) => (prev + 1) % 3);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   // Show a random notification after a delay
   useEffect(() => {
@@ -114,43 +107,6 @@ export default function Home() {
     }, 800);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    if (!isLoading && statsVisible) {
-      // Number animation for paczkomats from 1 to 5000+
-      const packomatInterval = setInterval(() => {
-        setPackomatCount((prev) => {
-          if (prev < 5000) return prev + 50;
-          clearInterval(packomatInterval);
-          return 5000;
-        });
-      }, 15);
-
-      // Number animation for packages from 1 to 1M+
-      const packageInterval = setInterval(() => {
-        setPackageCount((prev) => {
-          if (prev < 1000000) return prev + 10000;
-          clearInterval(packageInterval);
-          return 1000000;
-        });
-      }, 10);
-
-      // Percentage animation from 0 to 99.8%
-      const deliveryInterval = setInterval(() => {
-        setDeliveryRate((prev) => {
-          if (prev < 99.8) return parseFloat((prev + 1).toFixed(1));
-          clearInterval(deliveryInterval);
-          return 99.8;
-        });
-      }, 30);
-
-      return () => {
-        clearInterval(packomatInterval);
-        clearInterval(packageInterval);
-        clearInterval(deliveryInterval);
-      };
-    }
-  }, [isLoading, statsVisible]);
 
   // Automatyczne przewijanie opinii z zatrzymaniem na hover
   useEffect(() => {
@@ -609,10 +565,15 @@ export default function Home() {
 
 
       {/* Features Section */}
-      <section ref={featuresRef} className="py-16 bg-gray-50 dark:bg-gray-800">
-        <div className="container mx-auto px-4">
+      <section className="relative py-20 bg-gradient-to-br from-purple-100/80 via-blue-100/80 to-white dark:from-indigo-900 dark:via-blue-900 dark:to-gray-900 overflow-hidden">
+        {/* Dekoracje tła */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-10 left-1/3 w-60 h-60 bg-purple-300/30 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-blue-300/20 rounded-full blur-2xl" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <motion.h2
-            className="text-3xl font-bold text-center mb-6 dark:text-white"
+            className="text-3xl font-bold text-center mb-2 dark:text-white"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -621,188 +582,66 @@ export default function Home() {
             Nasze usługi
           </motion.h2>
           <motion.p
-            className="text-gray-600 dark:text-gray-300 text-center max-w-2xl mx-auto mb-12"
+            className="text-blue-600 dark:text-blue-400 text-center font-semibold mb-8 tracking-wide uppercase text-sm"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Dostarczamy kompleksowe rozwiązania dla Twoich potrzeb wysyłkowych
+            Dlaczego warto wybrać PackSmart?
           </motion.p>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Karta 1 */}
             <motion.div
-              className={`bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300 relative ${
-                activeFeature === 0 ? "ring-2 ring-blue-500" : ""
-              }`}
-              whileHover={{ y: -10 }}
-              initial={{ opacity: 0, y: 20 }}
+              className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 flex flex-col items-center border-t-4 border-blue-500 hover:scale-105 hover:shadow-2xl transition-all duration-300 group"
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.6 }}
+              whileHover={{ y: -8, boxShadow: '0 8px 32px 0 rgba(59,130,246,0.15)' }}
             >
-              <motion.div
-                className="absolute -top-3 -right-3 bg-blue-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center"
-                animate={{ scale: activeFeature === 0 ? [1, 1.2, 1] : 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                1
-              </motion.div>
-              <div className="text-blue-600 dark:text-blue-400 mb-4 flex justify-center">
-                <motion.div
-                  animate={{ rotateY: activeFeature === 0 ? 360 : 0 }}
-                  transition={{ duration: 0.8 }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-12 w-12"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </motion.div>
+              <div className="bg-gradient-to-tr from-blue-500 to-blue-300 text-white rounded-full p-4 mb-4 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-center dark:text-white">
-                Szybka wysyłka
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-center">
-                Wysyłaj paczki w dowolnym momencie, 24/7. Dostarczamy w ciągu 48
-                godzin na terenie całego kraju.
-              </p>
-              <motion.div className="w-full h-1 bg-gray-200 dark:bg-gray-600 mt-4 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-blue-500"
-                  initial={{ width: 0 }}
-                  whileInView={{ width: "100%" }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.5 }}
-                />
-              </motion.div>
+              <h3 className="text-xl font-bold mb-3 dark:text-white text-center">Ekspresowa wysyłka</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-center mb-2">Wysyłaj paczki 24/7 z dowolnego miejsca. Dostawa nawet w 24h na terenie całego kraju.</p>
             </motion.div>
-
+            {/* Karta 2 */}
             <motion.div
-              className={`bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300 relative ${
-                activeFeature === 1 ? "ring-2 ring-blue-500" : ""
-              }`}
-              whileHover={{ y: -10 }}
-              initial={{ opacity: 0, y: 20 }}
+              className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 flex flex-col items-center border-t-4 border-indigo-500 hover:scale-105 hover:shadow-2xl transition-all duration-300 group"
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              whileHover={{ y: -8, boxShadow: '0 8px 32px 0 rgba(99,102,241,0.15)' }}
             >
-              <motion.div
-                className="absolute -top-3 -right-3 bg-blue-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center"
-                animate={{ scale: activeFeature === 1 ? [1, 1.2, 1] : 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                2
-              </motion.div>
-              <div className="text-blue-600 dark:text-blue-400 mb-4 flex justify-center">
-                <motion.div
-                  animate={{ rotateY: activeFeature === 1 ? 360 : 0 }}
-                  transition={{ duration: 0.8 }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-12 w-12"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                    />
-                  </svg>
-                </motion.div>
+              <div className="bg-gradient-to-tr from-indigo-500 to-blue-400 text-white rounded-full p-4 mb-4 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-center dark:text-white">
-                Śledzenie przesyłek
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-center">
-                Monitoruj status swojej przesyłki w czasie rzeczywistym.
-                Otrzymuj powiadomienia SMS lub e-mail.
-              </p>
-              <motion.div className="w-full h-1 bg-gray-200 dark:bg-gray-600 mt-4 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-blue-500"
-                  initial={{ width: 0 }}
-                  whileInView={{ width: "100%" }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.7 }}
-                />
-              </motion.div>
+              <h3 className="text-xl font-bold mb-3 dark:text-white text-center">Zaawansowane śledzenie</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-center mb-2">Monitoruj status przesyłki w czasie rzeczywistym. Powiadomienia SMS i e-mail na każdym etapie.</p>
             </motion.div>
-
+            {/* Karta 3 */}
             <motion.div
-              className={`bg-white dark:bg-gray-700 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300 relative ${
-                activeFeature === 2 ? "ring-2 ring-blue-500" : ""
-              }`}
-              whileHover={{ y: -10 }}
-              initial={{ opacity: 0, y: 20 }}
+              className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 flex flex-col items-center border-t-4 border-green-500 hover:scale-105 hover:shadow-2xl transition-all duration-300 group"
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              whileHover={{ y: -8, boxShadow: '0 8px 32px 0 rgba(34,197,94,0.15)' }}
             >
-              <motion.div
-                className="absolute -top-3 -right-3 bg-blue-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center"
-                animate={{ scale: activeFeature === 2 ? [1, 1.2, 1] : 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                3
-              </motion.div>
-              <div className="text-blue-600 dark:text-blue-400 mb-4 flex justify-center">
-                <motion.div
-                  animate={{ rotateY: activeFeature === 2 ? 360 : 0 }}
-                  transition={{ duration: 0.8 }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-12 w-12"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </motion.div>
+              <div className="bg-gradient-to-tr from-green-500 to-blue-400 text-white rounded-full p-4 mb-4 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-center dark:text-white">
-                Sieć paczkomatów
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-center">
-                Dostęp do szerokiej sieci paczkomatów w całym kraju. Zawsze
-                znajdziesz paczkomat blisko Ciebie.
-              </p>
-              <motion.div className="w-full h-1 bg-gray-200 dark:bg-gray-600 mt-4 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-blue-500"
-                  initial={{ width: 0 }}
-                  whileInView={{ width: "100%" }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.9 }}
-                />
-              </motion.div>
+              <h3 className="text-xl font-bold mb-3 dark:text-white text-center">Sieć paczkomatów</h3>
+              <p className="text-gray-600 dark:text-gray-300 text-center mb-2">Ponad 5000 paczkomatów w całej Polsce. Odbieraj i nadaj paczki wygodnie, blisko domu lub pracy.</p>
             </motion.div>
           </div>
         </div>
@@ -916,139 +755,240 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Interactive Map Demo */}
-      <section className="py-16 bg-white dark:bg-gray-900 overflow-hidden">
-        <div className="container mx-auto px-4">
-          <EnhancedMap />
+      {/* Interactive Map Demo - nowoczesna sekcja */}
+      <section className="relative py-20 bg-gradient-to-br from-blue-50 via-white to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
+        {/* Dekoracje tła */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-10 left-1/4 w-60 h-60 bg-blue-200/30 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/3 w-80 h-80 bg-indigo-200/20 rounded-full blur-2xl" />
+          <div className="absolute top-1/2 left-1/2 w-6 h-6 bg-blue-400/40 rounded-full blur-md" />
+          <div className="absolute bottom-1/4 right-1/2 w-4 h-4 bg-indigo-400/30 rounded-full blur-sm" />
         </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
-        <div className="container mx-auto px-4">
-          <motion.div
-            className="max-w-3xl mx-auto bg-white dark:bg-gray-700 rounded-xl shadow-xl overflow-hidden"
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.h2
+            className="text-3xl font-bold text-center mb-2 dark:text-white"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <div className="p-8 md:p-12">
-              <motion.h2
-                className="text-3xl font-bold text-center mb-6 dark:text-white"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-              >
-                Dołącz do nas już dziś!
-              </motion.h2>
-              <motion.p
-                className="text-gray-600 dark:text-gray-300 text-center mb-8"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
-              >
-                Rozpocznij korzystanie z naszego systemu paczkomatów i ciesz się
-                szybką, bezpieczną dostawą.
-              </motion.p>
-              <motion.div
-                className="flex flex-col sm:flex-row justify-center gap-4"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
-              >
-                <Link href="/register">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      variant="secondary"
-                      className="w-full bg-blue-600 text-white hover:bg-blue-700"
-                      onClick={() => {}}
-                    >
-                      Rozpocznij teraz
-                    </Button>
-                  </motion.div>
-                </Link>
-                <Link href="/contact">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      variant="outline"
-                      className="w-full border-blue-600 text-blue-600 hover:bg-blue-50"
-                      onClick={() => {}}
-                    >
-                      Kontakt
-                    </Button>
-                  </motion.div>
-                </Link>
-              </motion.div>
-            </div>
+            Mapa paczkomatów
+          </motion.h2>
+          <motion.p
+            className="text-blue-600 dark:text-blue-400 text-center font-semibold mb-8 tracking-wide uppercase text-sm"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            Znajdź najbliższy paczkomat w swojej okolicy
+          </motion.p>
+          <motion.div
+            className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-blue-100 dark:border-gray-700 p-4 md:p-8 mb-8"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <EnhancedMap />
           </motion.div>
+          <div className="flex justify-center">
+            <Button variant="secondary" className="bg-blue-600 text-white hover:bg-blue-700 px-8 py-3 text-lg font-semibold rounded-xl shadow-lg" onClick={() => {}}>
+              Znajdź najbliższy paczkomat
+            </Button>
+          </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section
-        className="py-16 bg-white dark:bg-gray-900"
-        ref={(el) => {
-          if (el && !statsVisible) {
-            const observer = new IntersectionObserver(
-              ([entry]) => {
-                if (entry.isIntersecting) {
-                  setStatsVisible(true);
-                  observer.disconnect();
-                }
-              },
-              { threshold: 0.1 }
-            );
-            observer.observe(el);
-          }
-        }}
-      >
+      {/* CTA Section - nowoczesna wersja */}
+      <section className="relative py-20 bg-gradient-to-br from-blue-100 via-white to-indigo-100 dark:from-blue-900 dark:via-gray-900 dark:to-gray-900 overflow-hidden">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-12">
+          {/* Ilustracja/animacja */}
+          <div className="flex-1 flex justify-center mb-8 md:mb-0">
+            <div className="relative w-64 h-64 flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-200 via-blue-400 to-indigo-300 opacity-30 blur-2xl" />
+              <Users className="w-40 h-40 text-blue-500 drop-shadow-xl z-10" />
+              {/* Możesz podmienić na SVG/obrazek jeśli chcesz */}
+            </div>
+          </div>
+          {/* Tekst i przyciski */}
+          <div className="flex-1">
+            <h2 className="text-4xl font-bold mb-4 dark:text-white">Dołącz do nas już dziś!</h2>
+            <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
+              Ponad <span className="font-bold text-blue-600">1 000 000</span> paczek miesięcznie, <span className="font-bold text-blue-600">5000+</span> paczkomatów, <span className="font-bold text-blue-600">99,8%</span> dostaw na czas.<br />
+              Zaufaj liderowi nowoczesnej logistyki!
+            </p>
+            <div className="flex gap-4 mb-6">
+              <Button variant="secondary" className="bg-blue-600 text-white hover:bg-blue-700" onClick={() => {}}>Rozpocznij teraz</Button>
+              <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50" onClick={() => {}}>Kontakt</Button>
+            </div>
+            <div className="flex items-center gap-3 mt-4">
+              <span className="text-gray-500 dark:text-gray-400 text-sm">Zaufało nam:</span>
+              <img src="/trusted1.svg" alt="Partner" className="h-8" />
+              <img src="/trusted2.svg" alt="Partner" className="h-8" />
+              <span className="ml-2 text-blue-600 font-semibold">10 000+ klientów</span>
+            </div>
+          </div>
+        </div>
+        {/* Dekoracje/confetti/animacja */}
+      </section>
+
+      {/* Statystyki - nowoczesna sekcja */}
+      <section className="relative py-20 bg-gradient-to-br from-white via-blue-50 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+          <h2 className="text-3xl font-bold text-center mb-10 dark:text-white">PackSmart w liczbach</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+            {/* Paczkomaty */}
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border-t-4 border-blue-500 flex flex-col items-center">
+              <div className="flex justify-center mb-2">
+                <Map className="h-10 w-10 text-blue-500" />
+              </div>
               <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">
-                {packomatCount.toLocaleString()}+
+                <CountUp end={5000} duration={2} />+
               </p>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">
-                Paczkomatów w Polsce
-              </p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Paczkomatów w Polsce</p>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">
-                {(packageCount / 1000000).toFixed(1)} mln+
+            {/* Przesyłek */}
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border-t-4 border-indigo-500 flex flex-col items-center">
+              <div className="flex justify-center mb-2">
+                <Package className="h-10 w-10 text-indigo-500" />
+              </div>
+              <p className="text-4xl font-bold text-indigo-600 dark:text-indigo-400">
+                <CountUp end={1000000} duration={2} />+
               </p>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">
-                Przesyłek miesięcznie
-              </p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Przesyłek miesięcznie</p>
             </motion.div>
+            {/* Dostarczonych na czas */}
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border-t-4 border-green-500 flex flex-col items-center">
+              <div className="flex justify-center mb-2">
+                <Clock className="h-10 w-10 text-green-500" />
+              </div>
+              <p className="text-4xl font-bold text-green-600 dark:text-green-400">
+                99,8%
+              </p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Dostarczonych na czas</p>
+            </motion.div>
+            {/* Zadowoleni klienci */}
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.3 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border-t-4 border-yellow-400 flex flex-col items-center">
+              <div className="flex justify-center mb-2">
+                <Star className="h-10 w-10 text-yellow-400" />
+              </div>
+              <p className="text-4xl font-bold text-yellow-500 dark:text-yellow-400">
+                <CountUp end={10000} duration={2} />+
+              </p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">Zadowolonych klientów</p>
+            </motion.div>
+          </div>
+          {/* Pasek zaufania/logotypy/avatars */}
+          <div className="flex justify-center mt-10 gap-6">
+            <img src="/trusted1.svg" alt="Partner" className="h-8" />
+            <img src="/trusted2.svg" alt="Partner" className="h-8" />
+            <img src="/trusted3.svg" alt="Partner" className="h-8" />
+          </div>
+        </div>
+        {/* Dekoracje/mapka/animacja punktów */}
+      </section>
+
+      {/* Twórcy aplikacji */}
+      <section className="relative py-20 bg-gradient-to-br from-indigo-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
+        {/* Dekoracje tła */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-10 left-1/4 w-60 h-60 bg-indigo-200/30 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/3 w-80 h-80 bg-blue-200/20 rounded-full blur-2xl" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.h2
+            className="text-3xl font-bold text-center mb-12 dark:text-white"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            Twórcy aplikacji
+          </motion.h2>
+          <div className="flex flex-col gap-16">
+            {/* Twórca 1 */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              className="flex flex-col md:flex-row items-center gap-10 md:gap-16"
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
             >
-              <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">
-                {deliveryRate.toFixed(1)}%
-              </p>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">
-                Dostarczonych na czas
-              </p>
+              <Image src={AdamPIC} alt="Adam Pukaluk" width={192} height={192} className="w-60 h-60 rounded-full object-cover shadow-xl border-4 border-blue-200 dark:border-blue-700" />
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-2xl font-bold mb-2 dark:text-white">Adam Pukaluk</h3>
+                <p className="text-blue-600 dark:text-blue-400 font-semibold mb-2">Fullstack Developer</p>
+                <p className="text-gray-700 dark:text-gray-300 mb-4">Jeden z twórców aplikacji PackSmart. 10x developer wszystko zrobi we wszystkich językach programowania za odpowiadnią cene. <b className="font-bold text-indigo-600 dark:text-indigo-400 font-semibold">Głosujcie na Mentzena🗿</b></p>
+                <div className="flex gap-4 justify-center md:justify-start">
+                  <a href="https://github.com/Adam90PL" target="_blank" rel="noopener" className="text-gray-500 hover:text-blue-600"><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.729.083-.729 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.809 1.304 3.495.997.108-.775.418-1.305.762-1.606-2.665-.305-5.466-1.334-5.466-5.931 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.984-.399 3.003-.404 1.018.005 2.046.138 3.006.404 2.291-1.553 3.297-1.23 3.297-1.23.653 1.653.242 2.873.119 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.804 5.624-5.475 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.898-.015 3.293 0 .322.216.694.825.576C20.565 21.796 24 17.299 24 12c0-6.627-5.373-12-12-12z"/></svg></a>
+                  <a href="https://www.linkedin.com/in/adam-pukaluk-339058298/" target="_blank" rel="noopener" className="text-gray-500 hover:text-blue-600"><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.025-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.838-1.563 3.036 0 3.597 2 3.597 4.59v5.606z"/></svg></a>
+                </div>
+              </div>
+            </motion.div>
+            {/* Twórca 2 */}
+            <motion.div
+              className="flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16"
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+            >
+              <Image src={MarceliPIC} alt="Marceli Karman" width={192} height={192} className="w-60 h-60 rounded-full object-cover shadow-xl border-4 border-indigo-200 dark:border-indigo-700" />
+              <div className="flex-1 text-center md:text-right">
+                <h3 className="text-2xl font-bold mb-2 dark:text-white">Marceli Karman</h3>
+                <p className="text-indigo-600 dark:text-indigo-400 font-semibold mb-2">Fullstack Developer</p>
+                <p className="text-gray-700 dark:text-gray-300 mb-4">Jakiś noobek niewiadomo po co tu jest e what a sigma <b className="font-bold text-indigo-600 dark:text-indigo-400 font-semibold">Głosujcie na Mentzena🗿</b></p>
+                <div className="flex gap-4 justify-center md:justify-end">
+                  <a href="https://github.com/Karman1818/" target="_blank" rel="noopener" className="text-gray-500 hover:text-indigo-600"><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.729.083-.729 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.809 1.304 3.495.997.108-.775.418-1.305.762-1.606-2.665-.305-5.466-1.334-5.466-5.931 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.984-.399 3.003-.404 1.018.005 2.046.138 3.006.404 2.291-1.553 3.297-1.23 3.297-1.23.653 1.653.242 2.873.119 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.804 5.624-5.475 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.898-.015 3.293 0 .322.216.694.825.576C20.565 21.796 24 17.299 24 12c0-6.627-5.373-12-12-12z"/></svg></a>
+                  <a href="https://www.linkedin.com/in/marceli-karman-9503632b0/" target="_blank" rel="noopener" className="text-gray-500 hover:text-indigo-600"><svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.268h-3v-5.604c0-1.337-.025-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.838-1.563 3.036 0 3.597 2 3.597 4.59v5.606z"/></svg></a>
+                </div>
+              </div>
+            </motion.div>
+            {/* Twórca 3 */}
+            <motion.div
+              className="flex flex-col md:flex-row items-center gap-10 md:gap-16"
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+            >
+              <Image src={ChatGPT} alt="ChatGPT" width={192} height={192} className="w-60 h-60 rounded-full object-cover shadow-xl border-4 " />
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-2xl font-bold mb-2 dark:text-white">ChatGPT</h3>
+                <p className="text-indigo-600 dark:text-indigo-400 font-semibold mb-2">AI Assistant</p>
+                <p className="text-gray-700 dark:text-gray-300 mb-4">Twój ulubiony AI, który koduje szybciej niż Ty myślisz. Zna odpowiedź na każde pytanie, nawet jeśli nie istnieje.</p>
+              </div>
+            </motion.div>
+            {/* Twórca 4 */}
+            <motion.div
+              className="flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16"
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+            >
+              <Image src={CursorIA} alt="CursorAI" width={192} height={192} className="w-60 h-60 rounded-full object-cover shadow-xl border-4" />
+              <div className="flex-1 text-center md:text-right">
+                <h3 className="text-2xl font-bold mb-2 dark:text-white">CursorAI</h3>
+                <p className="text-blue-600 dark:text-blue-400 font-semibold mb-2">AI Pair Programmer</p>
+                <p className="text-gray-700 dark:text-gray-300 mb-4">Zawsze wie, gdzie postawić średnik. Debugowanie to dla niego relaks, a refaktor robi w 3 sekundy.</p>
+              </div>
+            </motion.div>
+            {/* Twórca 5 */}
+            <motion.div
+              className="flex flex-col md:flex-row items-center gap-10 md:gap-16"
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+            >
+              <Image src={CloudeAI} alt="CloudeAI" width={192} height={192} className="w-60 h-60 rounded-full object-cover shadow-xl border-4   " />
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-2xl font-bold mb-2 dark:text-white">CloudeAI</h3>
+                <p className="text-indigo-600 dark:text-indigo-400 font-semibold mb-2">AI Cloud Wizard</p>
+                <p className="text-gray-700 dark:text-gray-300 mb-4">Chmura to jego żywioł. Deployuje szybciej niż zdążysz powiedzieć &quot;production&quot;. Zawsze w trybie serverless.</p>
+              </div>
             </motion.div>
           </div>
         </div>
